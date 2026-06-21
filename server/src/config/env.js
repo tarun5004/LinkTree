@@ -22,7 +22,17 @@ const envSchema = z.object({
     .min(1, "MONGO_URI is required")
     .regex(/^mongodb(\+srv)?:\/\//, "MONGO_URI must be a valid MongoDB URI"),
 
-  CORS_ORIGIN: z.string().url().default("http://localhost:5173"),
+  CORS_ORIGIN: z
+    .string()
+    .default("http://localhost:5173")
+    .refine(
+      (value) =>
+        value
+          .split(",")
+          .map((origin) => origin.trim())
+          .every((origin) => z.string().url().safeParse(origin).success),
+      "CORS_ORIGIN must be a comma-separated list of valid URLs"
+    ),
 
 //   Define the schema for the logger level mean the level of logging that the application will use. The levels are defined as follows:
 //   - fatal: Only log fatal errors that cause the application to crash.

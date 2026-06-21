@@ -6,8 +6,12 @@ import { env } from "../../config/env.js";
 import { logger } from "../../config/logger.js";
 
 export const setupMiddlewares = (app) => {
+  const allowedOrigins = env.CORS_ORIGIN.split(",").map((origin) =>
+    origin.trim()
+  );
+
   app.use(cors({
-    origin: env.CORS_ORIGIN,
+    origin: allowedOrigins,
     credentials: true,
   }));
 

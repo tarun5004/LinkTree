@@ -6,9 +6,12 @@ const router = Router();
 
 router.get(
   "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
+  (req, res, next) => {
+    passport.authenticate("google", {
+      scope: ["profile", "email"],
+      state: req.query.redirectTo,
+    })(req, res, next);
+  }
 );
 
 router.get(
