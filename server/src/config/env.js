@@ -1,7 +1,17 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import dotenv from "dotenv";
 import { z } from "zod";
 
-dotenv.config();
+const envFilePath = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../.env"
+);
+
+dotenv.config({
+  path: envFilePath,
+  override: process.env.NODE_ENV !== "production",
+});
 
 // Custom schema for duration strings like "15m", "1h", "30d"
 const durationSchema = z

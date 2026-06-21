@@ -1,6 +1,7 @@
 import { Router } from "express";
 import passport from "./passport.js";
 import { getMe, handleGoogleCallback, logout } from "./auth.controller.js";
+import { requireAuth } from "../../shared/middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -29,7 +30,7 @@ router.get("/google/failure", (_req, res) => {
   });
 });
 
-router.get("/me", getMe);
+router.get("/me", requireAuth, getMe);
 
 router.post("/logout", logout);
 
