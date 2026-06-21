@@ -1,33 +1,31 @@
 import express from "express";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import morgan from "morgan";
-import { env } from "./config/env.js";
-import { logger } from "./config/logger.js";
+import { setupMiddlewares } from "./shared/middlewares/security.middleware.js";
 import { routes } from "./routes.js";
 import { errorHandler } from "./shared/middlewares/errorHandler.js";
 import { notFoundHandler } from "./shared/middlewares/notFoundHandler.js";
+import session from "express-session";
+import passport from "./features/auth/passport.js";
+import { env } from "./config/env.js";
 
 const app = express();
+setupMiddlewares(app);
 
 app.use(
-  cors({
-    origin: env.CORS_ORIGIN,
-    credentials: true,
-  })
-);
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-
-app.use(
-  morgan(env.NODE_ENV === "development" ? "dev" : "combined", {
-    stream: {
-      write: (message) => logger.info(message.trim()),
+  session({
+    secret: env.SESSION_SECRET || env.JWT_REFRESH_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: env.NODE_ENV === "production",
+      sameSite: "lax",
     },
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use("/api", routes);
 app.use(notFoundHandler);

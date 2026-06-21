@@ -1,0 +1,14 @@
+GET /api/auth/google
+  passport.authenticate("google")
+
+GET /api/auth/google/callback
+  passport.authenticate("google")
+  generate access + refresh token
+  set refresh token cookie
+  redirect to frontend
+
+GET /api/auth/me
+  auth middleware JWT verify karega
+
+POST /api/auth/logout
+  refresh cookie clear karega

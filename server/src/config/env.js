@@ -54,6 +54,8 @@ const envSchema = z.object({
   ACCESS_TOKEN_EXPIRES_IN: durationSchema.default("15m"),
   REFRESH_TOKEN_EXPIRES_IN: durationSchema.default("30d"),
 
+  SESSION_SECRET: z.string().min(32).optional(),
+
   CLIENT_REDIRECT_URL: z.string().url(),
 });
 
