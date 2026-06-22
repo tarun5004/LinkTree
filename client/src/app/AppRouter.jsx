@@ -1,5 +1,6 @@
 import { DashboardPage } from '../features/dashboard/DashboardPage.jsx'
 import { AuthCallbackPage } from '../features/auth/pages/AuthCallbackPage.jsx'
+import { AnalyticsPage } from '../features/analytics/pages/AnalyticsPage.jsx'
 import { LoginPage } from '../features/auth/pages/LoginPage.jsx'
 import { RegisterPage } from '../features/auth/pages/RegisterPage.jsx'
 import { HomePage } from '../features/home/HomePage.jsx'
@@ -18,6 +19,7 @@ export function AppRouter() {
     if (path === routes.register) return <RegisterPage />
     if (path === routes.callback) return <AuthCallbackPage />
     if (path === routes.dashboard) return <DashboardPage />
+    if (path === routes.analytics) return <AnalyticsPage />
     if (path.startsWith(`${routes.publicProfile}/`)) {
       const username = decodeURIComponent(path.replace(`${routes.publicProfile}/`, '').split('/')[0])
       return <PublicProfilePage username={username} />

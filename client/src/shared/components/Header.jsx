@@ -27,6 +27,9 @@ export function Header() {
             <button className={navButton} type="button" onClick={() => navigate(routes.dashboard)}>
               Dashboard
             </button>
+            <button className={navButton} type="button" onClick={() => navigate(routes.analytics)}>
+              Analytics
+            </button>
             <button className={navButton} type="button" onClick={logout}>
               Logout
             </button>

@@ -148,6 +148,7 @@ Frontend:
 /login            Login page
 /register         Register page
 /dashboard        Private dashboard
+/analytics        Private analytics page
 /u/:username      Public bio page
 ```
 
