@@ -4,4 +4,5 @@ export const routes = {
   register: '/register',
   callback: '/auth/callback',
   dashboard: '/dashboard',
+  publicProfile: '/u',
 }

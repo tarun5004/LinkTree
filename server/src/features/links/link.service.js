@@ -1,7 +1,10 @@
 import { AppError } from "../../shared/errors/AppError.js";
+import { env } from "../../config/env.js";
+import { findUserByUsername, updateUserUsername } from "../user/user.service.js";
 import {
   createOwnerLink,
   deleteOwnerLinkById,
+  findActiveLinksByOwner,
   findLinksByOwner,
   findOwnerLinkById,
   incrementLinkClick,
@@ -18,6 +21,24 @@ const toLinkDto = (link) => ({
   lastClickedAt: link.lastClickedAt,
   createdAt: link.createdAt,
   updatedAt: link.updatedAt,
+});
+
+const toPublicLinkDto = (link) => ({
+  id: link._id.toString(),
+  title: link.title,
+  description: link.description,
+});
+
+const createPublicUrl = (username) => {
+  const clientUrl = env.CLIENT_REDIRECT_URL.replace(/\/$/, "");
+  return `${clientUrl}/u/${username}`;
+};
+
+const toProfileDto = (user) => ({
+  name: user.name,
+  username: user.username,
+  avatar: user.avatar,
+  publicUrl: user.username ? createPublicUrl(user.username) : "",
 });
 
 const createWeeklyBuckets = () => {
@@ -39,6 +60,35 @@ const createWeeklyBuckets = () => {
 export const listUserLinks = async (userId) => {
   const links = await findLinksByOwner(userId);
   return links.map(toLinkDto);
+};
+
+export const getUserPublicProfile = (user) => {
+  return toProfileDto(user);
+};
+
+export const updateUserPublicProfile = async (userId, payload) => {
+  const user = await updateUserUsername(userId, payload.username);
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  return toProfileDto(user);
+};
+
+export const getPublicProfileByUsername = async (username) => {
+  const user = await findUserByUsername(username);
+
+  if (!user) {
+    throw new AppError("Public profile not found", 404);
+  }
+
+  const links = await findActiveLinksByOwner(user._id);
+
+  return {
+    profile: toProfileDto(user),
+    links: links.map(toPublicLinkDto),
+  };
 };
 
 export const createUserLink = async (userId, payload) => {

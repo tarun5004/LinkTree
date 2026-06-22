@@ -4,6 +4,10 @@ export const findLinksByOwner = (ownerId) => {
   return Link.find({ owner: ownerId }).sort({ createdAt: -1 }).lean();
 };
 
+export const findActiveLinksByOwner = (ownerId) => {
+  return Link.find({ owner: ownerId, isActive: true }).sort({ createdAt: -1 }).lean();
+};
+
 export const createOwnerLink = (ownerId, payload) => {
   return Link.create({
     ...payload,

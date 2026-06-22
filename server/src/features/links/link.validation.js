@@ -4,6 +4,17 @@ const objectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid link id");
 
+const usernameSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(3, "Public link must be at least 3 characters")
+  .max(30, "Public link must be at most 30 characters")
+  .regex(
+    /^[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?$/,
+    "Use lowercase letters, numbers, hyphens, and underscores only"
+  );
+
 const urlSchema = z
   .string()
   .trim()
@@ -36,5 +47,17 @@ export const updateLinkSchema = z.object({
 export const linkIdParamsSchema = z.object({
   params: z.object({
     id: objectIdSchema,
+  }),
+});
+
+export const updatePublicProfileSchema = z.object({
+  body: z.object({
+    username: usernameSchema,
+  }),
+});
+
+export const publicProfileParamsSchema = z.object({
+  params: z.object({
+    username: usernameSchema,
   }),
 });

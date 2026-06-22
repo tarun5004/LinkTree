@@ -2,14 +2,19 @@ import { asyncHandler } from "../../shared/utils/asyncHandler.js";
 import {
   createLinkSchema,
   linkIdParamsSchema,
+  publicProfileParamsSchema,
+  updatePublicProfileSchema,
   updateLinkSchema,
 } from "./link.validation.js";
 import {
   createUserLink,
   deleteUserLink,
+  getPublicProfileByUsername,
   getUserLinkAnalytics,
+  getUserPublicProfile,
   listUserLinks,
   trackLinkClick,
+  updateUserPublicProfile,
   updateUserLink,
 } from "./link.service.js";
 
@@ -21,6 +26,35 @@ export const getLinks = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     links,
+  });
+});
+
+export const getProfile = asyncHandler(async (req, res) => {
+  const profile = getUserPublicProfile(req.user);
+
+  res.status(200).json({
+    success: true,
+    profile,
+  });
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { body } = updatePublicProfileSchema.parse({ body: req.body });
+  const profile = await updateUserPublicProfile(getUserId(req), body);
+
+  res.status(200).json({
+    success: true,
+    profile,
+  });
+});
+
+export const getPublicProfile = asyncHandler(async (req, res) => {
+  const { params } = publicProfileParamsSchema.parse({ params: req.params });
+  const publicProfile = await getPublicProfileByUsername(params.username);
+
+  res.status(200).json({
+    success: true,
+    ...publicProfile,
   });
 });
 

@@ -32,6 +32,29 @@ export const fetchLinks = async () => {
   return data.links
 }
 
+export const fetchDashboardProfile = async () => {
+  const data = await linkRequest('/profile')
+  return data.profile
+}
+
+export const updateDashboardProfile = async (payload) => {
+  const data = await linkRequest('/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+
+  return data.profile
+}
+
+export const fetchPublicProfile = async (username) => {
+  const data = await linkRequest(`/public/${username}`)
+
+  return {
+    profile: data.profile,
+    links: data.links,
+  }
+}
+
 export const createLink = async (payload) => {
   const data = await linkRequest('/', {
     method: 'POST',

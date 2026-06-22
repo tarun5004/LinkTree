@@ -3,9 +3,11 @@ import { routes } from '../../../app/routes.js'
 import {
   createLink,
   deleteLink,
+  fetchDashboardProfile,
   fetchLinkAnalytics,
   fetchLinks,
   trackLinkClick,
+  updateDashboardProfile,
   updateLink,
 } from '../../../shared/api/linksApi.js'
 import { StatusBox } from '../../../shared/components/StatusBox.jsx'
@@ -16,6 +18,7 @@ import { DashboardLayout } from '../components/DashboardLayout.jsx'
 import { LinkForm } from '../components/LinkForm.jsx'
 import { LinkList } from '../components/LinkList.jsx'
 import { ProfilePreview } from '../components/ProfilePreview.jsx'
+import { PublicProfileCard } from '../components/PublicProfileCard.jsx'
 
 const emptyAnalytics = {
   totalLinks: 0,
@@ -29,20 +32,24 @@ const emptyAnalytics = {
 export function DashboardPage() {
   const { user, loading, error, loadCurrentUser } = useAuth()
   const [links, setLinks] = useState([])
+  const [profile, setProfile] = useState(null)
   const [analytics, setAnalytics] = useState(emptyAnalytics)
   const [dashboardLoading, setDashboardLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [profileSaving, setProfileSaving] = useState(false)
   const [dashboardError, setDashboardError] = useState('')
 
   const refreshDashboard = useCallback(async () => {
     setDashboardError('')
-    const [nextLinks, nextAnalytics] = await Promise.all([
+    const [nextLinks, nextAnalytics, nextProfile] = await Promise.all([
       fetchLinks(),
       fetchLinkAnalytics(),
+      fetchDashboardProfile(),
     ])
 
     setLinks(nextLinks)
     setAnalytics(nextAnalytics)
+    setProfile(nextProfile)
   }, [])
 
   useEffect(() => {
@@ -86,6 +93,20 @@ export function DashboardPage() {
       setDashboardError(err.message)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleProfileSave = async (payload) => {
+    setProfileSaving(true)
+    setDashboardError('')
+
+    try {
+      const nextProfile = await updateDashboardProfile(payload)
+      setProfile(nextProfile)
+    } catch (err) {
+      setDashboardError(err.message)
+    } finally {
+      setProfileSaving(false)
     }
   }
 
@@ -154,8 +175,14 @@ export function DashboardPage() {
 
       <div className="grid grid-cols-[minmax(320px,0.9fr)_minmax(0,1.35fr)_minmax(300px,0.95fr)] gap-5 max-2xl:grid-cols-[minmax(300px,0.85fr)_minmax(0,1.15fr)] max-lg:grid-cols-1">
         <div className="grid content-start gap-5">
+          <PublicProfileCard
+            key={profile?.username || 'public-profile'}
+            profile={profile}
+            onSave={handleProfileSave}
+            saving={profileSaving}
+          />
           <LinkForm onCreate={handleCreate} saving={saving} />
-          <ProfilePreview links={links} user={user} onOpen={handleOpen} />
+          <ProfilePreview links={links} profile={profile} user={user} onOpen={handleOpen} />
         </div>
 
         <section className="grid content-start gap-5">

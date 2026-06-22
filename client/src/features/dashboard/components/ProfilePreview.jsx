@@ -1,5 +1,6 @@
-export function ProfilePreview({ links, user, onOpen }) {
+export function ProfilePreview({ links, profile, user, onOpen }) {
   const visibleLinks = links.filter((link) => link.isActive).slice(0, 5)
+  const username = profile?.username || user?.username || 'creator'
 
   return (
     <aside className="rounded-[28px] bg-[#174b17] p-5 text-white shadow-2xl shadow-emerald-950/20">
@@ -11,7 +12,7 @@ export function ProfilePreview({ links, user, onOpen }) {
             <span className="text-3xl font-black">{(user?.name || 'C').charAt(0)}</span>
           )}
         </div>
-        <h2 className="mt-4 text-center text-2xl font-black">@{user?.username || 'creator'}</h2>
+        <h2 className="mt-4 text-center text-2xl font-black">@{username}</h2>
         <p className="mx-auto mt-1 max-w-xs text-center text-sm font-bold text-[#10220f]/70">
           One link for every place your work lives.
         </p>
